@@ -1,0 +1,4 @@
+app:
+  name: "Youssef Downloader"
+  package: "com.youssef.downloader"
+  version: "1.0.0"
