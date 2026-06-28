@@ -21,13 +21,18 @@ jobs:
       - name: Install Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Set up Flutter SDK
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
       - name: Install Dependencies
         run: |
           pip install flet yt-dlp
           
       - name: Build APK with Flet
         run: |
-          yes | flet build apk --no-android-studio-check
+          flet build apk --no-android-studio-check
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
