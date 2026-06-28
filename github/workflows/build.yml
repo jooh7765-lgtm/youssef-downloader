@@ -26,6 +26,10 @@ jobs:
         with:
           channel: 'stable'
 
+      - name: Disable Flutter Analytics
+        run: |
+          flutter config --no-analytics
+
       - name: Install Dependencies
         run: |
           pip install flet yt-dlp
