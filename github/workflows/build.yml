@@ -1,9 +1,8 @@
-name: Build Youssef APK
+name: Build Kivy APK
 on: [push, workflow_dispatch]
 
 jobs:
   build:
-    runs-ok: true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -13,34 +12,26 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'zulu'
-          java-version: '17'
-
-      - name: Install Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Set up Flutter SDK
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-
-      - name: Disable Flutter Analytics
+      - name: Install Buildozer and Dependencies
         run: |
-          flutter config --no-analytics
+          pip install buildozer cython setuptools
+          sudo apt-get update
+          sudo apt-get install -y git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev buttoney python3-dev libasound2-dev
 
-      - name: Install Dependencies
+      - name: Initialize Buildozer
         run: |
-          pip install flet yt-dlp
-          
-      - name: Build APK with Flet
-        run: |
-          flet build apk --no-android-studio-check --no-interactive
+          buildozer init
+          # تعديل ملف الإعدادات تلقائياً ليناسب تطبيقك
+          sed -i 's/package.name = myapp/package.name = youssefdownloader/' buildozer.spec
+          sed -i 's/title = My Application/title = Youssef Downloader/' buildozer.spec
+          sed -i 's/requirements = python3,kivy/requirements = python3,kivy,yt_dlp/' buildozer.spec
 
-      - name: Upload APK Artifact
+      - name: Build APK with Buildozer
+        run: |
+          buildozer android debug
+
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Youssef-Downloader-APK
-          path: build/apk/*.apk
+          name: Youssef-Kivy-APK
+          path: .shadow/bin/*.apk
